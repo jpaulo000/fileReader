@@ -1,7 +1,8 @@
 #CSV File Reader
 This is a simple program with java swing interface to read files such as CSV 
-(although it also works with .txt and any other with a header file).
+(although it also works with .txt and any other file with a header).</br>
 
+![App](app.JPG)</br>
 ##MainWindow.java
 All the user interface remains here
 
