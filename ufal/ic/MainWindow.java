@@ -6,11 +6,8 @@
 package ufal.ic;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.util.List;
 
 /**
  *
@@ -45,24 +42,26 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        SelectedVar = new javax.swing.JList<>();
-        SelectedVar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        WatchList = new javax.swing.JList<>();
+        WatchList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         VarList = new javax.swing.JList<>();
-        VarList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        VarList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jLabel3 = new javax.swing.JLabel();
         progressBar = new javax.swing.JProgressBar();
         progressBar.setValue(0);
         progressBar.setBorderPainted(true);
+        listModelFromHeader = new DefaultListModel();
+        listModelFromWatchList = new DefaultListModel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        filename.setText("Nome do Arquivo");
+        filename.setText("filename");
 
-        LoadButton.setText("Selecionar Arquivo");
+        LoadButton.setText("Select File");
         LoadButton.addActionListener(evt -> LoadButtonActionPerformed(evt));
 
 
-        StartButton.setText("Iniciar");
+        StartButton.setText("Start");
         StartButton.setEnabled(false);
         StartButton.addActionListener(evt -> StartButtonActionPerformed(evt));
 
@@ -93,23 +92,19 @@ public class MainWindow extends javax.swing.JFrame {
                                         .addComponent(StartButton)))
         );
 
-        VarList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
+        VarList.setModel(listModelFromHeader);
 
         VarList.addListSelectionListener(e -> {
             if(e.getValueIsAdjusting()){
                 final String selectedValue = VarList.getSelectedValue();
                 listModelFromWatchList.addElement(selectedValue);
                 listModelFromHeader.removeElement(selectedValue);
-                //System.out.println(selectedValuesList);
+                //System.out.println("Removido da lista :" + selectedValue);
             }
         });
         jScrollPane2.setViewportView(VarList);
 
-        jLabel2.setText("Lista de Variáveis");
+        jLabel2.setText("Variables List");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -132,20 +127,17 @@ public class MainWindow extends javax.swing.JFrame {
                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        SelectedVar.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-
-        SelectedVar.addListSelectionListener(e -> {
+        WatchList.setModel(listModelFromWatchList);
+        WatchList.addListSelectionListener(e -> {
             if(e.getValueIsAdjusting()){
-                final String selectedValue = VarList.getSelectedValue();
-                listModelFromWatchList.removeElement(selectedValue);
+                final String selectedValue = WatchList.getSelectedValue();
                 listModelFromHeader.addElement(selectedValue);
+                listModelFromWatchList.removeElement(selectedValue);
+                //System.out.println("Adicionado a lista :" + selectedValue);
+
             }
         });
-        jScrollPane3.setViewportView(SelectedVar);
+        jScrollPane3.setViewportView(WatchList);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -164,7 +156,7 @@ public class MainWindow extends javax.swing.JFrame {
                                 .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE))
         );
 
-        jLabel3.setText("Variáveis Selecionadas");
+        jLabel3.setText("Watch List");
 
         progressBar.setStringPainted(true);
 
@@ -209,8 +201,8 @@ public class MainWindow extends javax.swing.JFrame {
     }// </editor-fold>
 
     private void LoadButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        FileFilter filter = new FileNameExtensionFilter("DataBase Files", "csv");
+        //Define my filter and set it as default
+        FileFilter filter = new FileNameExtensionFilter("DataBase Files", "csv", "txt");
         JFileChooser jc = new JFileChooser();
         jc.addChoosableFileFilter(filter);
         jc.setFileFilter(filter);
@@ -221,13 +213,14 @@ public class MainWindow extends javax.swing.JFrame {
             filepath = jc.getSelectedFile().toString();
             filename.setText(jc.getName(jc.getSelectedFile()));
             System.out.println(filepath);
-            // TODO: LER O CABEÇALHO DO ARQUIVO
+            // TODO: READE FILE HEADER
             csvReader.readFileHeader(filepath, filename.getText());
         }
     }
 
     private void StartButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+        //If there is a file
         if(!filepath.equals("")){
             csvReader.readFileContent(filepath);
             StartButton.setEnabled(false);
@@ -236,11 +229,10 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     public static void setVarList(String[] newList){
-        listModelFromHeader = new DefaultListModel();
+
         for(String each : newList)
             listModelFromHeader.addElement(each);
 
-        VarList.setModel(listModelFromHeader);
     }
 
     /**
@@ -286,7 +278,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton LoadButton;
     private javax.swing.JButton StartButton;
     public static javax.swing.JProgressBar progressBar;
-    private static javax.swing.JList<String> SelectedVar;
+    private static javax.swing.JList<String> WatchList;
     private static javax.swing.JList<String> VarList;
     private javax.swing.JLabel filename;
     private javax.swing.JLabel jLabel2;
