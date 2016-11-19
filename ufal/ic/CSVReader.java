@@ -27,8 +27,7 @@ public class CSVReader implements PropertyChangeListener {
 	private Map<String, Integer> dict = new HashMap<>();
 
 	public CSVReader() {
-		// constructor
-		
+		// constructor		 
 	}
 
 	@Override
