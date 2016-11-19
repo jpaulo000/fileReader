@@ -28,6 +28,7 @@ public class CSVReader implements PropertyChangeListener {
 
 	public CSVReader() {
 		// constructor
+		
 	}
 
 	@Override
