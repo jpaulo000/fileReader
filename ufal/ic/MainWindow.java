@@ -1,13 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ufal.ic;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.File;
+import java.util.List;
 
 /**
  *
@@ -32,76 +29,45 @@ public class MainWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
 
-        csvReader = new CSVReader();
-        jPanel1 = new javax.swing.JPanel();
-        filename = new javax.swing.JLabel();
-        LoadButton = new javax.swing.JButton();
-        StartButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jLabel2 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        WatchList = new javax.swing.JList<>();
-        WatchList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        VarList = new javax.swing.JList<>();
-        VarList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jLabel3 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        files = new javax.swing.JLabel();
+        LoadVars = new javax.swing.JButton();
+        SelectFiles = new javax.swing.JButton();
+        StartButton = new javax.swing.JButton();
+        moveBack = new javax.swing.JButton();
+        move = new javax.swing.JButton();
+        SaveButton = new javax.swing.JButton();
+        csvReader = new CSVReader();
+
         progressBar = new javax.swing.JProgressBar();
         progressBar.setValue(0);
         progressBar.setBorderPainted(true);
+        progressBar.setStringPainted(true);
+
         listModelFromHeader = new DefaultListModel();
         listModelFromWatchList = new DefaultListModel();
+        listModelFromFileChooser = new DefaultListModel();
+
+        WatchList = new javax.swing.JList<>();
+        WatchList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        WatchList.setModel(listModelFromWatchList);
+
+        VarList = new javax.swing.JList<>();
+        VarList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        VarList.setModel(listModelFromHeader);
+
+        FilesList = new javax.swing.JList<>();
+        FilesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        FilesList.setModel(listModelFromFileChooser);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        filename.setText("filename");
-
-        LoadButton.setText("Select File");
-        LoadButton.addActionListener(evt -> LoadButtonActionPerformed(evt));
-
-
-        StartButton.setText("Start");
-        StartButton.setEnabled(false);
-        StartButton.addActionListener(evt -> StartButtonActionPerformed(evt));
-
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(202, 202, 202)
-                                .addComponent(LoadButton)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(167, 167, 167)
-                                .addComponent(filename)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(StartButton)
-                                .addGap(99, 99, 99))
-        );
-        jPanel1Layout.setVerticalGroup(
-                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(LoadButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(filename)
-                                        .addComponent(StartButton)))
-        );
-
-        VarList.setModel(listModelFromHeader);
-
-        VarList.addListSelectionListener(e -> {
-            if(e.getValueIsAdjusting()){
-                final String selectedValue = VarList.getSelectedValue();
-                listModelFromWatchList.addElement(selectedValue);
-                listModelFromHeader.removeElement(selectedValue);
-                //System.out.println("Removido da lista :" + selectedValue);
-            }
-        });
         jScrollPane2.setViewportView(VarList);
 
         jLabel2.setText("Variables List");
@@ -110,55 +76,70 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
                 jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(27, 27, 27)
-                                .addComponent(jLabel2)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(82, 82, 82)
+                                .addComponent(jLabel2)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
                 jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
                                 .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
         );
 
-        WatchList.setModel(listModelFromWatchList);
-        WatchList.addListSelectionListener(e -> {
-            if(e.getValueIsAdjusting()){
-                final String selectedValue = WatchList.getSelectedValue();
-                listModelFromHeader.addElement(selectedValue);
-                listModelFromWatchList.removeElement(selectedValue);
-                //System.out.println("Adicionado a lista :" + selectedValue);
 
-            }
-        });
         jScrollPane3.setViewportView(WatchList);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
                 jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 246, Short.MAX_VALUE)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
                 jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 277, Short.MAX_VALUE)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE))
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE)
+                                .addContainerGap())
         );
 
         jLabel3.setText("Watch List");
 
-        progressBar.setStringPainted(true);
+        jScrollPane1.setViewportView(FilesList);
+
+        SelectFiles.setText("Select Files");
+        SelectFiles.addActionListener(evt -> SelectFilesButtonActionPerformed(evt));
+
+        StartButton.setText("Start");
+        StartButton.addActionListener(evt -> StartButtonActionPerformed(evt));
+
+        files.setText("Files");
+
+        LoadVars.setText("Load Variables");
+        LoadVars.addActionListener(evt -> LoadVarsActionPerformed(evt));
+
+        move.setText(">");
+        move.addActionListener(evt -> moveActionPerformed(evt));
+
+        moveBack.setText("<");
+        moveBack.addActionListener(evt -> moveBackActionPerformed(evt));
+
+        SaveButton.setText("Save");
+        SaveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -167,32 +148,71 @@ public class MainWindow extends javax.swing.JFrame {
                         .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(layout.createSequentialGroup()
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                         .addGroup(layout.createSequentialGroup()
                                                                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                                        .addComponent(move, javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                        .addComponent(moveBack)))
+                                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                                                                 .addComponent(jLabel3)
-                                                                                .addGap(42, 42, 42))
-                                                                        .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                                .addContainerGap())))
+                                                                                .addComponent(LoadVars)
+                                                                                .addGroup(layout.createSequentialGroup()
+                                                                                        .addComponent(SelectFiles)
+                                                                                        .addGap(8, 8, 8)))
+                                                                        .addGap(78, 78, 78)))
+                                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                                .addComponent(StartButton)
+                                                                .addGap(18, 18, 18)
+                                                                .addComponent(SaveButton)
+                                                                .addGap(52, 52, 52)))))
+                                .addContainerGap())
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(116, 116, 116)
+                                .addComponent(files)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addContainerGap()
+                                                .addComponent(files)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                                .addGap(12, 12, 12))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(44, 44, 44)
+                                                .addComponent(SelectFiles)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(LoadVars)
+                                                .addGap(18, 18, 18)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(StartButton)
+                                                        .addComponent(SaveButton))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(layout.createSequentialGroup()
-                                                .addGap(0, 0, Short.MAX_VALUE)
                                                 .addComponent(jLabel3)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(0, 0, Short.MAX_VALUE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addComponent(moveBack)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(move)
+                                                .addGap(108, 108, 108)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -200,40 +220,74 @@ public class MainWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>
 
-    private void LoadButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void SelectFilesButtonActionPerformed(java.awt.event.ActionEvent evt) {
         //Define my filter and set it as default
         FileFilter filter = new FileNameExtensionFilter("DataBase Files", "csv", "txt");
         JFileChooser jc = new JFileChooser();
+        jc.setMultiSelectionEnabled(true);
         jc.addChoosableFileFilter(filter);
         jc.setFileFilter(filter);
         int returnValue = jc.showOpenDialog(null);
 
         if(returnValue == JFileChooser.APPROVE_OPTION){
             StartButton.setEnabled(true);
-            filepath = jc.getSelectedFile().toString();
-            filename.setText(jc.getName(jc.getSelectedFile()));
-            System.out.println(filepath);
-            // TODO: READE FILE HEADER
-            csvReader.readFileHeader(filepath, filename.getText());
+            filepath = jc.getSelectedFiles();
+            DefaultListModel<String> files_available = (DefaultListModel<String>)FilesList.getModel();
+            for(File each_item : filepath){
+                System.out.println(each_item.toString());
+                files_available.addElement(each_item.toString());
+            }
         }
     }
 
     private void StartButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        //If there is a file
+        //If there is a file selected
         if(!filepath.equals("")){
-            csvReader.readFileContent(filepath);
+            int size = WatchList.getModel().getSize();
+            String[] elementsOnWatchList = new String[size];
+            for(int i = 0; i < size; i++){
+                elementsOnWatchList[i] = WatchList.getModel().getElementAt(i);
+            }
+            System.out.println("Start foi pressionado");
             StartButton.setEnabled(false);
+            csvReader.readFileContent(filepath[0].toString(), elementsOnWatchList);
         }
 
     }
 
-    public static void setVarList(String[] newList){
-
-        for(String each : newList)
-            listModelFromHeader.addElement(each);
-
+    private void saveActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
     }
+
+    private void LoadVarsActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        String filepath = FilesList.getSelectedValue();
+        csvReader.readFileHeader(filepath.toString());
+    }
+
+    private void moveActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        List<String> selected = VarList.getSelectedValuesList();
+        DefaultListModel<String> left = (DefaultListModel<String>) VarList.getModel();
+        DefaultListModel<String> right = (DefaultListModel<String>)WatchList.getModel();
+        for(String item : selected){
+            left.removeElement(item);
+            right.addElement(item);
+        }
+    }
+
+    private void moveBackActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        List<String> selected = WatchList.getSelectedValuesList();
+        DefaultListModel<String> left = (DefaultListModel<String>) VarList.getModel();
+        DefaultListModel<String> right = (DefaultListModel<String>)WatchList.getModel();
+        for(String item : selected){
+            right.removeElement(item);
+            left.addElement(item);
+        }
+    }
+
 
     /**
      * @param args the command line arguments
@@ -270,27 +324,44 @@ public class MainWindow extends javax.swing.JFrame {
         });
     }
 
+    public static void setVarList(String[] newList){
+
+        //first clear the list from last input
+        listModelFromHeader.clear();
+        listModelFromWatchList.clear();
+
+        for(String each : newList)
+            listModelFromHeader.addElement(each);
+
+    }
+
     public static void showErrorMessagePopUp(String Message){
         JOptionPane.showMessageDialog(null, Message);
     }
 
     // Variables declaration - do not modify
-    private javax.swing.JButton LoadButton;
-    private javax.swing.JButton StartButton;
-    public static javax.swing.JProgressBar progressBar;
-    private static javax.swing.JList<String> WatchList;
-    private static javax.swing.JList<String> VarList;
-    private javax.swing.JLabel filename;
+    private javax.swing.JButton SelectFiles;
+    private javax.swing.JButton LoadVars;
+    private javax.swing.JLabel files;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JButton move;
+    private javax.swing.JButton moveBack;
+    public static javax.swing.JButton StartButton;
+    public static javax.swing.JButton SaveButton;
+    public static javax.swing.JProgressBar progressBar;
+    private static javax.swing.JList<String> FilesList;
+    private static javax.swing.JList<String> WatchList;
+    private static javax.swing.JList<String> VarList;
     private static DefaultListModel listModelFromHeader;
     private static DefaultListModel listModelFromWatchList;
+    private static DefaultListModel listModelFromFileChooser;
     private CSVReader csvReader;
-    private String filepath;
+    private File[] filepath;
     // End of variables declaration
 }
