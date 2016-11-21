@@ -4,7 +4,9 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -42,8 +44,9 @@ public class MainWindow extends javax.swing.JFrame {
         StartButton = new javax.swing.JButton();
         moveBack = new javax.swing.JButton();
         move = new javax.swing.JButton();
-        SaveButton = new javax.swing.JButton();
-        csvReader = new CSVReader();
+        RemoveButton = new javax.swing.JButton();
+        dict_filename_to_filepath = new HashMap<>();
+        reader = new Reader();
 
         progressBar = new javax.swing.JProgressBar();
         progressBar.setValue(0);
@@ -134,12 +137,8 @@ public class MainWindow extends javax.swing.JFrame {
         moveBack.setText("<");
         moveBack.addActionListener(evt -> moveBackActionPerformed(evt));
 
-        SaveButton.setText("Save");
-        SaveButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveActionPerformed(evt);
-            }
-        });
+        RemoveButton.setText("Remove");
+        RemoveButton.addActionListener(evt -> removeActionPerformed(evt));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -173,7 +172,7 @@ public class MainWindow extends javax.swing.JFrame {
                                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                                                 .addComponent(StartButton)
                                                                 .addGap(18, 18, 18)
-                                                                .addComponent(SaveButton)
+                                                                .addComponent(RemoveButton)
                                                                 .addGap(52, 52, 52)))))
                                 .addContainerGap())
                         .addGroup(layout.createSequentialGroup()
@@ -199,7 +198,7 @@ public class MainWindow extends javax.swing.JFrame {
                                                 .addGap(18, 18, 18)
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                         .addComponent(StartButton)
-                                                        .addComponent(SaveButton))
+                                                        .addComponent(RemoveButton))
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -232,10 +231,14 @@ public class MainWindow extends javax.swing.JFrame {
         if(returnValue == JFileChooser.APPROVE_OPTION){
             StartButton.setEnabled(true);
             filepath = jc.getSelectedFiles();
-            DefaultListModel<String> files_available = (DefaultListModel<String>)FilesList.getModel();
+            DefaultListModel<String> filenames_to_be_shown = (DefaultListModel<String>)FilesList.getModel();
             for(File each_item : filepath){
-                System.out.println(each_item.toString());
-                files_available.addElement(each_item.toString());
+                String[] tmpPath = each_item.toString().split("\\\\");
+                //show only the file name
+                String tmpFilename = tmpPath[tmpPath.length-1].split("\\.")[0];
+                filenames_to_be_shown.addElement(tmpFilename);
+                //full path
+                dict_filename_to_filepath.put(tmpFilename, each_item.toString());
             }
         }
     }
@@ -243,27 +246,42 @@ public class MainWindow extends javax.swing.JFrame {
     private void StartButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         //If there is a file selected
-        if(!filepath.equals("")){
-            int size = WatchList.getModel().getSize();
-            String[] elementsOnWatchList = new String[size];
+        String selected_file = FilesList.getSelectedValue();
+        int size = WatchList.getModel().getSize();
+        String[] elementsOnWatchList = new String[size];
             for(int i = 0; i < size; i++){
                 elementsOnWatchList[i] = WatchList.getModel().getElementAt(i);
             }
-            System.out.println("Start foi pressionado");
-            StartButton.setEnabled(false);
-            csvReader.readFileContent(filepath[0].toString(), elementsOnWatchList);
-        }
-
+        StartButton.setEnabled(false);
+        reader.readFileContent(dict_filename_to_filepath.get(selected_file), elementsOnWatchList);
     }
 
-    private void saveActionPerformed(java.awt.event.ActionEvent evt) {
+    private void removeActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+        String filename = FilesList.getSelectedValue();
+        DefaultListModel<String> files = (DefaultListModel<String>) FilesList.getModel();
+        for (int i = 0; i < files.getSize();i++){
+            if(files.get(i).equals(filename)){
+                files.remove(i);
+                dict_filename_to_filepath.remove(i);
+            }
+        }
+        if(((DefaultListModel<String>) FilesList.getModel()).isEmpty())
+            StartButton.setEnabled(false);
+
+        //Clear the variables loaded and watch listed
+        DefaultListModel<String> variablesList;
+        variablesList = (DefaultListModel<String>) VarList.getModel();
+        variablesList.clear();
+        variablesList = (DefaultListModel<String>) WatchList.getModel();
+        variablesList.clear();
+
     }
 
     private void LoadVarsActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         String filepath = FilesList.getSelectedValue();
-        csvReader.readFileHeader(filepath.toString());
+        reader.readFileHeader(dict_filename_to_filepath.get(filepath.toString()));
     }
 
     private void moveActionPerformed(java.awt.event.ActionEvent evt) {
@@ -353,7 +371,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton move;
     private javax.swing.JButton moveBack;
     public static javax.swing.JButton StartButton;
-    public static javax.swing.JButton SaveButton;
+    public static javax.swing.JButton RemoveButton;
     public static javax.swing.JProgressBar progressBar;
     private static javax.swing.JList<String> FilesList;
     private static javax.swing.JList<String> WatchList;
@@ -361,7 +379,8 @@ public class MainWindow extends javax.swing.JFrame {
     private static DefaultListModel listModelFromHeader;
     private static DefaultListModel listModelFromWatchList;
     private static DefaultListModel listModelFromFileChooser;
-    private CSVReader csvReader;
+    private Map<String, String> dict_filename_to_filepath;
+    private Reader reader;
     private File[] filepath;
     // End of variables declaration
 }

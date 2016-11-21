@@ -1,5 +1,7 @@
 package ufal.ic;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -32,11 +34,13 @@ public class FieldAttributes {
         String output = ENDLINE+"\t"+className.toUpperCase()+ENDLINE;
         while(it.hasNext()){
             Map.Entry pair = (Map.Entry) it.next();
-            double percent = ((Double)pair.getValue() / CSVReader.totalLines) * 100.0;
+            Double percentToBeTruncated = ((Double)pair.getValue() / Reader.total_num_lines) * 100.0;
+            Double percent = BigDecimal.valueOf(percentToBeTruncated).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
             output += pair.getKey()+" has "+((Double) pair.getValue()).intValue()+" occurrences. [%"
-                    +(int)percent+"]"+ENDLINE;
+                    +percent+"]"+ENDLINE;
         }
-        //it.remove();
+        it.remove();
         System.out.println(output);
         return output;
     }
