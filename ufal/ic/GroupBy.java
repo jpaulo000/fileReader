@@ -13,7 +13,7 @@ public class GroupBy {
 	private static int headerLength;
 	private static int oldHeaderLength;
 
-	public Map<String, ArrayList<Integer>> groupValues(int[] columns, CSVReader csv) throws IOException {
+	public Map<String, ArrayList<Integer>> groupValues(int[] columns, CSVReader csv, Boolean isInteger) throws IOException {
 
 		String[] header = csv.readNext();
 		headerLength = header.length;
@@ -28,7 +28,7 @@ public class GroupBy {
 		String[] oldRow;
 		int rowcount = 0;
 
-		// if(isInteger) generateIntegerValues();
+		if(isInteger) generateIntegersValues();
 
 		Map<String, ArrayList<Integer>> map = new HashMap<String, ArrayList<Integer>>();
 
@@ -36,7 +36,7 @@ public class GroupBy {
 
 			String[] newRow = setRow(oldRow, columns);
 
-			getUniqueValues(newRow);
+			if(!isInteger) getUniqueValues(newRow);
 
 			for (int j = 0; j < valuesList.size(); j++) {
 				String actualValue = valuesList.get(j);
@@ -57,7 +57,7 @@ public class GroupBy {
 				}
 
 			}
-			if (rowcount % 50000 == 0) {
+			if (rowcount % 500000 == 0) {
 				System.out.println("Lida linha: " + rowcount);
 				System.out.println(map);
 			}
@@ -105,7 +105,12 @@ public class GroupBy {
 
 	}
 
-	public static int[] generateIntegerValues(CSVReader csv) throws IOException {
+	public void generateIntegersValues(){
+		for(int i=0;i<17;i++) valuesList.add(Integer.toString(i));
+		valuesList.add("");
+	}
+	
+	public static int[] generateColumnsValues(CSVReader csv) throws IOException {
 		int rowcount = 0;
 		ArrayList<Integer> sumvalor = new ArrayList<Integer>();
 
@@ -120,8 +125,8 @@ public class GroupBy {
 
 			for (int i = 0; i < intHeaderLength; i++) {
 				if (row[i].isEmpty())
-					row[i] = "99";
-				if (isInteger(row[i], 10)) {
+					row[i] = "100";
+				if (isFieldAInteger(row[i], 10)) {
 					int oldvalue = sumvalor.get(i);
 					sumvalor.set(i, oldvalue + 1);
 				}
@@ -141,7 +146,7 @@ public class GroupBy {
 		return columns.stream().mapToInt(i -> i).toArray();
 	}
 
-	private static Boolean isInteger(String value, int raiz) {
+	private static Boolean isFieldAInteger(String value, int raiz) {
 		if (value.isEmpty())
 			return false;
 		for (int i = 0; i < value.length(); i++) {
@@ -155,8 +160,8 @@ public class GroupBy {
 				return false;
 		}
 		try {
-			if ((value.length() < 3) && (Integer.valueOf(value) < 16))
-				return true;
+			if ((value.length() < 3) && (Integer.valueOf(value) < 16)){
+				return true;}
 			else
 				return false;
 		} catch (NumberFormatException e) {
